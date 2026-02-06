@@ -7,7 +7,20 @@ export default function Home() {
         <section style={{ background: '#f9f9f9', minHeight:'600px' }}>
             <ExplorePlaces></ExplorePlaces>
             <h1>This is the Home Page</h1>
-            
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
+            <h1>This is the Home Page</h1>
         </section>
     )
 }
