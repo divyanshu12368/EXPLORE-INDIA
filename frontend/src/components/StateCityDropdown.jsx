@@ -59,6 +59,7 @@ const StateCityDropdown = ({ onCitySelect }) => {
   };
 
   return (
+    <div style={{ display: 'flex', }}>
     <div style={containerStyle}>
       {/* STATE DROPDOWN */}
       <div style={wrapperStyle}>
@@ -104,6 +105,7 @@ const StateCityDropdown = ({ onCitySelect }) => {
           ))}
         </select>
       </div>
+    </div>
     </div>
   );
 };

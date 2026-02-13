@@ -1,5 +1,6 @@
 import { useState } from "react";
 import StateCityDropdown from "/workspaces/EXPLORE-INDIA/frontend/src/components/StateCityDropdown.jsx";
+import SelectedCards from "./SelectedCards";
 
 const ExplorePlaces = () => {
   const [city, setCity] = useState("");
@@ -13,6 +14,7 @@ const ExplorePlaces = () => {
         </div>
       {city && <p>Showing tourist places in <b>{city}</b></p>}
       
+       <SelectedCards selectedCity={city} />
     </div>
   );
 };
