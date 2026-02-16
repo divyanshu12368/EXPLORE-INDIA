@@ -1,4 +1,4 @@
-const places = [
+const defaultPlaces = [
   {
     id: 1,
     name: "Bekal Fort",
@@ -49,4 +49,4 @@ const places = [
   }
 ];
 
-export default places;
+export default defaultPlaces;

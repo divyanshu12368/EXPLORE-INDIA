@@ -1,19 +1,17 @@
 import places from "../data/places";
+import defaultPlaces from "../data/defaultPlaces"; // make sure this exists
 import PlaceCard from "../components/PlaceCard";
 
 const SelectedCards = ({ selectedCity }) => {
 
-  const filteredPlaces = places.filter(
-    (place) =>
-      place.city === selectedCity
-  );
+  const placesToShow = selectedCity
+    ? places.filter((place) => place.city === selectedCity)
+    : defaultPlaces; // 👈 fallback when no city selected
 
   return (
     <div>
-      <h2>Showing tourist places in {selectedCity}</h2>
-
       <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-        {filteredPlaces.map((place) => (
+        {placesToShow.map((place) => (
           <PlaceCard key={place.id} place={place} />
         ))}
       </div>
