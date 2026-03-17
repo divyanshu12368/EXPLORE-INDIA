@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import cities from "../data/cities.json";
+import cities from "../../data/cities.json";
 
 const StateCityDropdown = ({ onCitySelect }) => {
   const [selectedState, setSelectedState] = useState("");

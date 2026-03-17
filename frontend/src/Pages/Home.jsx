@@ -1,5 +1,5 @@
-import PlaceCard from "../components/PlaceCard"
-import ExplorePlaces from "../components/ExplorePlaces"
+import {PlaceCard} from "../components/index"
+import {ExplorePlaces} from "../components/index"
 
 
 export default function Home() {

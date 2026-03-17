@@ -1,6 +1,6 @@
-import places from "../data/places";
-import defaultPlaces from "../data/defaultPlaces"; // make sure this exists
-import PlaceCard from "../components/PlaceCard";
+import places from "../../data/places";
+import defaultPlaces from "../../data/defaultPlaces"; // make sure this exists
+import {PlaceCard} from "../index";
 
 const SelectedCards = ({ selectedCity }) => {
 

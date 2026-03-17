@@ -1,5 +1,5 @@
-import places from "../data/defaultPlaces";
-import PlaceCard from "../components/PlaceCard";
+import defaultPlaces from "../../data/defaultPlaces";
+import PlaceCard from "./PlaceCard";
 
 const DefaultCards = () => {
 

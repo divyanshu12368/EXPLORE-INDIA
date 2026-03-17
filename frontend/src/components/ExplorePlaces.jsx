@@ -1,7 +1,7 @@
 import { useState } from "react";
-import StateCityDropdown from "/workspaces/EXPLORE-INDIA/frontend/src/components/StateCityDropdown.jsx";
-import SelectedCards from "./SelectedCards";
-import defaultPlaces from "../data/defaultPlaces";
+import {StateCityDropdown} from "./index";
+import {SelectedCards} from "./index";
+import {defaultPlaces} from "./index";
 
 const ExplorePlaces = () => {
   const [city, setCity] = useState("");
