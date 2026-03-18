@@ -11,8 +11,9 @@ import PlaceCard from "./Cards/PlaceCard";
 // import {RandomCards} from "./Cards/RandomCards";
 import SelectedCards from "./Cards/SelectedCards";
 import defaultPlaces from "../data/defaultPlaces";
+import Input from "./Input/Input";
 
 
 export {
-    Layout, Hero, Features, ExplorePlaces, CitySearch, Navbar, Footer, StateCityDropdown, DefaultCards, PlaceCard, SelectedCards, defaultPlaces
+    Layout, Hero, Features, ExplorePlaces, CitySearch, Navbar, Footer, StateCityDropdown, DefaultCards, PlaceCard, SelectedCards, defaultPlaces, Input
 }
