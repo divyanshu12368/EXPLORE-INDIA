@@ -1,28 +1,37 @@
-import { useNavigate } from "react-router-dom";
+// src/components/Cards/PlaceCard.jsx
+
+import { Link } from "react-router-dom";
 
 const PlaceCard = ({ place }) => {
-  const navigate = useNavigate();
-
   return (
-    <div
-      onClick={() => navigate(`/place/${place.id}`)}
-      style={{
-        width: "250px",
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        padding: "10px",
-        cursor: "pointer"
-      }}
+    <Link
+      to={`/place/${place.id}`}
+      className="group block bg-white rounded-2xl overflow-hidden border border-orange-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
     >
-      <img
-        src={place.image}
-        alt={place.name}
-        style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }}
-      />
+      {/* Image */}
+      <div className="overflow-hidden h-48">
+        <img
+          src={place.image}
+          alt={place.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
 
-      <h3>{place.name}</h3>
-      <p>{place.description}</p>
-    </div>
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="font-bold text-stone-900 text-base mb-1 group-hover:text-orange-500 transition-colors duration-200">
+          {place.name}
+        </h3>
+        <p className="text-stone-400 text-sm leading-relaxed mb-3">
+          {place.description}
+        </p>
+
+        {/* Location badge */}
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full">
+          📍 {place.city}, {place.state}
+        </span>
+      </div>
+    </Link>
   );
 };
 
