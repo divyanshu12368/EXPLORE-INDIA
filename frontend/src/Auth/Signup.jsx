@@ -42,72 +42,124 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[80vh]">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-6 rounded-xl shadow space-y-4"
-      >
-        <h2 className="text-2xl font-semibold text-center">
-          Create Account
-        </h2>
-
-        <Input
-          label="Full Name"
-          name="name"
-          placeholder="Enter your name"
-          value={form.name}
-          onChange={handleChange}
-          error={errors.name}
-          required
-        />
-
-        <Input
-          label="Email"
-          type="email"
-          name="email"
-          placeholder="Enter your email"
-          value={form.email}
-          onChange={handleChange}
-          error={errors.email}
-          required
-        />
-
-        <Input
-          label="Password"
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          value={form.password}
-          onChange={handleChange}
-          error={errors.password}
-          required
-        />
-
-        <Input
-          label="Confirm Password"
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          error={errors.confirmPassword}
-          required
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          Sign Up
-        </button>
-
-        <p className="text-sm text-center text-gray-500">
-          Already have an account?{" "}
-          <span className="text-blue-500 cursor-pointer">
-            <Link to="/login">Login</Link>
-          </span>
-        </p>
-      </form>
+    <div className="min-h-screen bg-[#FFFBF5] relative overflow-hidden flex items-center justify-center px-4 py-12">
+ 
+      {/* Background decorative blobs */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-orange-200/30 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-teal-200/30 blur-3xl pointer-events-none" />
+ 
+      {/* Dot grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          backgroundImage: "radial-gradient(circle, #f97316 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+ 
+      {/* Card */}
+      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl border border-orange-100 shadow-lg shadow-orange-50 p-8">
+ 
+        {/* Brand */}
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-block mb-4">
+            <span
+              className="text-2xl font-black text-orange-500"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              Explore
+            </span>
+            <span
+              className="text-2xl font-black text-teal-700"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              India
+            </span>
+          </Link>
+          <h2
+            className="text-2xl font-black text-stone-900"
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            Create Account
+          </h2>
+          <p className="text-stone-400 text-sm mt-1">
+            Join us and start exploring India
+          </p>
+        </div>
+ 
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+ 
+          <Input
+            label="Full Name"
+            name="name"
+            placeholder="Enter your name"
+            value={form.name}
+            onChange={handleChange}
+            error={errors.name}
+            required
+          />
+ 
+          <Input
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={form.email}
+            onChange={handleChange}
+            error={errors.email}
+            required
+          />
+ 
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={form.password}
+            onChange={handleChange}
+            error={errors.password}
+            required
+          />
+ 
+          <Input
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            required
+          />
+ 
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm tracking-wide mt-2"
+          >
+            Create Account →
+          </button>
+ 
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-2">
+            <div className="flex-1 h-px bg-stone-100" />
+            <span className="text-xs text-stone-300 font-medium">or</span>
+            <div className="flex-1 h-px bg-stone-100" />
+          </div>
+ 
+          {/* Login link */}
+          <p className="text-sm text-center text-stone-400">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-teal-700 hover:text-teal-800 font-semibold transition-colors duration-200"
+            >
+              Sign In
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
