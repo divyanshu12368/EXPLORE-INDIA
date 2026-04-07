@@ -8,6 +8,8 @@ import Dashboard from "./Pages/Dashboard";
 import Login from "./Auth/Login";
 import Signup from "./Auth/Signup";
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
+import PlaceAdderForm from "./PlaceAdder/PlaceAdderForm";
+import MyPlaces from "./PlaceAdder/MyPlaces";
 
 
 
@@ -29,7 +31,22 @@ function App() {
           <ProtectedRoute>
             <Dashboard />   {/* ✅ only opens if user is logged in */}
           </ProtectedRoute>
+        
           } />
+        <Route path="/place-adder"
+          element={
+            <ProtectedRoute>
+              <PlaceAdderForm />   {/* ✅ only opens if user is logged in */}
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/my-places"
+          element={
+            <ProtectedRoute>
+              <MyPlaces />   {/* ✅ only opens if user is logged in */}
+            </ProtectedRoute>
+          } 
+        />
 
       </Route>
       

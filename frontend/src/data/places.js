@@ -1,6 +1,7 @@
 const places = [
   {
     id: 1,
+    email: "divyanshu12368@gmail.com",
     name: "Bekal Fort",
     state: "Kerala",
     city: "Kanhangad",
@@ -9,6 +10,7 @@ const places = [
   },
   {
     id: 2,
+    email: "divyanshu12368@gmail.com",
     name: "Anandashram",
     state: "Kerala",
     city: "Kanhangad",
@@ -17,6 +19,7 @@ const places = [
   },
   {
     id: 3,
+    email: "divyanshu12368@gmail.com",
     name: "Angrezon ke jamane ka pul",
     state: "Uttar Pradesh",
     city: "Kasganj",
@@ -25,6 +28,7 @@ const places = [
   },
   {
     id: 4,
+    email: "divyanshu12368@gmail.com",
     name: "Anandashram",
     state: "Uttar Pradesh",
     city: "Kasganj",
@@ -33,6 +37,7 @@ const places = [
   },
   {
     id: 5,
+    email: "user2@gmail.com",
     name: "Bekal Fort",
     state: "Uttar Pradesh",
     city: "Kasganj",
@@ -41,6 +46,7 @@ const places = [
   },
   {
     id: 6,
+    email: "user2@gmail.com",
     name: "Anandashram",
     state: "Uttar Pradesh",
     city: "Kasganj",
