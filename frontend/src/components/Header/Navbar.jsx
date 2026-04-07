@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../Context/AuthContext";
 
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Explore", to: "/explore" },
+  { label: "Dashboard", to: "/dashboard" },
   // { label: "Places", to: "/places" },
 ];
 
