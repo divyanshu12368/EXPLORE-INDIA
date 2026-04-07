@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   useState(() => {
     const userCredential = Credentials.find(
-      (cred) => cred.email === user?.email
+      (cred) => cred.email === user?.email && cred.password === user?.password
     );
     setCredentialUser(userCredential);
   }, [user?.email]);
@@ -113,7 +113,7 @@ export default function Dashboard() {
           <div className="space-y-3 mb-8">
             <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-stone-50 border border-stone-100">
               <span className="text-xs font-bold text-stone-400 uppercase tracking-wide">Email</span>
-              <span className="text-sm font-semibold text-stone-700">{user?.email}</span>
+              <span className="text-sm font-semibold text-stone-700">{credentialUser?.email}</span>
             </div>
             <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-stone-50 border border-stone-100">
               <span className="text-xs font-bold text-stone-400 uppercase tracking-wide">Contact</span>

@@ -139,14 +139,14 @@ export default function MyPlaces() {
                         </td>
 
                         {/* Description */}
-                        <td className="px-5 py-4 text-stone-500 max-w-[200px]">
+                        <td className="px-5 py-4 text-stone-500 max-w-50">
                           <span className="block truncate" title={place.description}>
                             {place.description}
                           </span>
                         </td>
 
                         {/* Img URL */}
-                        <td className="px-5 py-4 max-w-[160px]">
+                        <td className="px-5 py-4 max-w-40">
                           <span
                             className="block truncate text-orange-400 text-xs font-mono"
                             title={place.image}
