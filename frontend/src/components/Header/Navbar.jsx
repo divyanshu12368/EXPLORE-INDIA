@@ -4,16 +4,27 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Explore", to: "/explore" },
-  { label: "Dashboard", to: "/dashboard" },
-  // { label: "Places", to: "/places" },
-];
+
+
+// const navLinks = [
+//   { label: "Home", to: "/" },
+//   { label: "Explore", to: "/explore" },
+//   { label: dashLabel(), to: dashLogin() },
+//   // { label: "Places", to: "/places" },
+// ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
+  const navLinks = [
+    { label: "Home", to: "/" },
+    { label: "Explore", to: "/explore" },
+    {
+      label: user ? "Dashboard" : "Login",
+      to: user ? "/dashboard" : "/login",
+    },
+  ];
 
   return (
     <nav className="sticky top-0 z-50 bg-[#FFFBF5] border-b border-orange-100 shadow-sm">
