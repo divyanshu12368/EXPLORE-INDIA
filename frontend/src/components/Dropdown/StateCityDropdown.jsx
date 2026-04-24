@@ -1,19 +1,30 @@
 // src/components/Dropdown/StateCityDropdown.jsx
 
-import { useState, useMemo } from "react";
-import cities from "../../data/cities.json";
+import { useState, useMemo, useEffect} from "react";
+const BASE_URL = import.meta.env.VITE_API_URL;
+//import cities from "../../data/cities.json";
 
 const StateCityDropdown = ({ onCitySelect, onStateSelect, onReset }) => {
+  const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
+  useEffect(()=>{
+  const fetchCities = async () => {
+    const res = await fetch(`${BASE_URL}/api/cities`);
+    const data = await res.json();
+    setCities(data)
+  };
+  fetchCities();
+},[])
+
   const states = useMemo(() => {
     return [...new Set(cities.map((item) => item.state))].sort();
-  }, []);
+  }, [cities]);
 
   const filteredCities = useMemo(() => {
     return cities.filter((item) => item.state === selectedState);
-  }, [selectedState]);
+  }, [cities, selectedState]);
 
   const handleStateChange = (e) => {
     const val = e.target.value;
