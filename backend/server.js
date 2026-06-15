@@ -2,10 +2,11 @@ import express from "express"
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cityRoutes from "./routes/cityRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
 
 dotenv.config();
-//connectDB()
+connectDB()
 
 const app = express();
          
@@ -19,6 +20,8 @@ app.get("/", (req,res)=>{
 })
 
 app.use("/api/cities", cityRoutes);
+
+app.use("/api/auth", authRoutes);
 
 
 

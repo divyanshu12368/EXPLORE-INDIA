@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import {Input} from "../components/";
+import { Input } from "../components/";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";   // ✅ import useAuth
-import Credentials from "./Credentials";           // ✅ import credentials
-
-
+import { useAuth } from "../Context/AuthContext";
+import api from "../utils/axiosInstance";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -13,9 +11,10 @@ export default function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();   // ✅ get login function from context
-  const navigate = useNavigate(); // ✅ for redirect after login
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({
@@ -34,22 +33,27 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validate()) {
-      // console.log("Login Data:", form);
-      // 👉 call your login API here
-       const user = Credentials.find(
-        (cred) => cred.email === form.email && cred.password === form.password
-      );
+    if (!validate()) return;
 
-      if (user) {
-        login(user);              // ✅ save user in context (globally)
-        navigate("/dashboard");   // ✅ redirect to desired page
-      } else {
-        setErrors({ auth: "Invalid email or password" }); // ✅ show error
-      }
+    try {
+      setLoading(true);
+
+      const response = await api.post("/api/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+
+      login(response.data.user);
+      navigate("/dashboard");
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Something went wrong. Please try again.";
+      setErrors({ auth: message });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,9 +145,10 @@ export default function Login() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm tracking-wide"
+            disabled={loading}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
-            Sign In →
+            {loading ? "Signing In..." : "Sign In →"}
           </button>
  
           {/* Divider */}
