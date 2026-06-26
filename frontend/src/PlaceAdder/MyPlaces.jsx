@@ -1,5 +1,3 @@
-// src/Pages/MyPlaces.jsx
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
@@ -50,7 +48,6 @@ export default function MyPlaces() {
   return (
     <div className="min-h-screen bg-[#FFFBF5] relative overflow-hidden px-4 py-12">
 
-      {/* Background blobs */}
       <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-orange-200/20 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-teal-200/20 blur-3xl pointer-events-none" />
 
@@ -98,7 +95,6 @@ export default function MyPlaces() {
           </div>
         ) : (
           <>
-            {/* Table */}
             <div className="bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -133,11 +129,20 @@ export default function MyPlaces() {
                         <td className="px-5 py-4 max-w-40">
                           <img src={place.image} alt={place.name} className="w-10 h-10 rounded-lg object-cover border border-stone-100" />
                         </td>
+
+                        {/* Actions — only View, links to PlaceDetails */}
                         <td className="px-5 py-4">
-                          <div className="flex items-center justify-center gap-2">
-                            <button disabled title="View (coming soon)" className="w-8 h-8 flex items-center justify-center rounded-full border border-stone-200 text-stone-400 cursor-not-allowed opacity-60">👁️</button>
-                            <button disabled title="Edit (coming soon)" className="w-8 h-8 flex items-center justify-center rounded-full border border-stone-200 text-stone-400 cursor-not-allowed opacity-60">✏️</button>
-                            <button disabled title="Delete (coming soon)" className="w-8 h-8 flex items-center justify-center rounded-full border border-stone-200 text-stone-400 cursor-not-allowed opacity-60">🗑️</button>
+                          <div className="flex items-center justify-center">
+                            <Link
+                              to={`/place/${place._id}`}
+                              title="View Place"
+                              className="w-8 h-8 flex items-center justify-center rounded-full border border-teal-200 text-teal-600 hover:bg-teal-50 transition-colors duration-200"
+                            >
+                              {/* Professional external link / view icon */}
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </Link>
                           </div>
                         </td>
                       </tr>
@@ -147,7 +152,6 @@ export default function MyPlaces() {
               </div>
             </div>
 
-            {/* Add button bottom */}
             <div className="mt-6 flex justify-center sm:justify-start">
               <Link
                 to="/place-adder"
