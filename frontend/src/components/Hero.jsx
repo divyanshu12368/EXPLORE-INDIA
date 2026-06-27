@@ -1,5 +1,3 @@
-// src/components/Hero.jsx
-
 import { Link } from "react-router-dom";
 
 export default function Hero() {
@@ -26,8 +24,12 @@ export default function Hero() {
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center w-full">
 
         {/* Badge */}
-        <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-xs font-bold tracking-widest uppercase border border-orange-200">
-          🇮🇳 &nbsp; Your India Travel Guide
+        <span className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-xs font-bold tracking-widest uppercase border border-orange-200">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Your India Travel Guide
         </span>
 
         {/* Headline */}
@@ -72,7 +74,7 @@ export default function Hero() {
             Let's Explore →
           </Link>
           <Link
-            to="/places"
+            to="/explore"
             className="px-8 py-3.5 bg-transparent border-2 border-teal-700 text-teal-700 hover:bg-teal-700 hover:text-white font-bold text-sm tracking-wide rounded-full transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
           >
             View All Places
@@ -90,8 +92,7 @@ export default function Hero() {
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to bottom, transparent 0%, rgba(255,251,245,0.6) 40%, rgba(255,247,237,0.92) 75%, #fff7ed 100%)",
+          background: "linear-gradient(to bottom, transparent 0%, rgba(255,251,245,0.6) 40%, rgba(255,247,237,0.92) 75%, #fff7ed 100%)",
         }}
       />
     </section>

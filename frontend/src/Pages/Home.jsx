@@ -1,15 +1,18 @@
-import {Hero} from "../components/index";
-import {Features} from "../components/index";
+import { Hero } from "../components/index";
+import { Features } from "../components/index";
+import TopPlacesSlider from "../components/TopPlacesSlider";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#FFFBF5] flex flex-col">
- 
+
       <Hero />
- 
+
+      <TopPlacesSlider />
+
       <Features />
- 
+
       {/* CTA Banner */}
       <section className="bg-teal-700 px-6 py-16 text-center">
         <h2
@@ -28,7 +31,7 @@ export default function Home() {
           Start Exploring →
         </Link>
       </section>
- 
+
     </div>
   );
 }
