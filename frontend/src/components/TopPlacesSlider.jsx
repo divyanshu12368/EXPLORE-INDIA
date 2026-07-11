@@ -15,7 +15,7 @@ export default function TopPlacesSlider() {
     const fetchPlaces = async () => {
       try {
         const res = await api.get("/api/places/all");
-        setPlaces(res.data.places);
+        setPlaces(res.data.places || []);
       } catch (err) {
         console.error("Failed to fetch places:", err);
       } finally {
@@ -43,9 +43,9 @@ export default function TopPlacesSlider() {
   // Build an extended track: [last clone, ...all places, first clones...]
   // so we always have enough cards to slide into view smoothly
   const extendedPlaces =
-    places.length > 0
-      ? [...places, ...places.slice(0, VISIBLE)] // append a few clones at the end
-      : [];
+  Array.isArray(places) && places.length > 0
+    ? [...places, ...places.slice(0, VISIBLE)]
+    : [];
 
   const goNext = () => {
     setTransition(true);
