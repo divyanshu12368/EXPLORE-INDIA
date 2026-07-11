@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import {Input} from "../components";
-import { Link } from "react-router-dom";
+import { Input } from "../components";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/axiosInstance";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -11,6 +14,8 @@ export default function Signup() {
   });
 
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -32,12 +37,28 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
 
-    if (validate()) {
-      console.log("Signup Data:", form);
-      // 👉 call your API here
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+
+      await api.post("/api/auth/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      navigate("/login");
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Something went wrong. Please try again.";
+      setApiError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,13 +153,21 @@ export default function Signup() {
             error={errors.confirmPassword}
             required
           />
+
+          {/* API error message */}
+          {apiError && (
+            <p className="text-red-500 text-sm text-center font-medium">
+              {apiError}
+            </p>
+          )}
  
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm tracking-wide mt-2"
+            disabled={loading}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm tracking-wide mt-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
-            Create Account →
+            {loading ? "Creating Account..." : "Create Account →"}
           </button>
  
           {/* Divider */}

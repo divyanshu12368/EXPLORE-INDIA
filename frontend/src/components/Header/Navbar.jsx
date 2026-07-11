@@ -20,10 +20,10 @@ export default function Navbar() {
   const navLinks = [
     { label: "Home", to: "/" },
     { label: "Explore", to: "/explore" },
-    {
-      label: user ? "Dashboard" : "Login",
-      to: user ? "/dashboard" : "/login",
-    },
+    // {
+    //   label: user ? "Dashboard" : "Login",
+    //   to: user ? "/dashboard" : "/login",
+    // },
   ];
 
   return (

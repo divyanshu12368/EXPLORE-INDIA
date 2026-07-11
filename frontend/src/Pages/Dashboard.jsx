@@ -2,26 +2,15 @@
 
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import Credentials from "../Auth/Credentials";
-import { useState } from "react";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [credentialUser, setCredentialUser] = useState(null);
-
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
-
-  useState(() => {
-    const userCredential = Credentials.find(
-      (cred) => cred.email === user?.email && cred.password === user?.password
-    );
-    setCredentialUser(userCredential);
-  }, [user?.email]);
 
   const actions = [
     {
@@ -89,7 +78,7 @@ export default function Dashboard() {
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-orange-100 shadow-md mb-4 bg-orange-50 flex items-center justify-center">
               <img
-                src={credentialUser?.img}
+                src={user?.img}
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -102,7 +91,7 @@ export default function Dashboard() {
               className="text-2xl font-black text-stone-900"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              {credentialUser?.name || "John Doe"}
+              {user?.name || "John Doe"}
             </h1>
             <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-orange-100 text-orange-600 text-xs font-bold border border-orange-200">
               🇮🇳 Explorer
@@ -113,12 +102,12 @@ export default function Dashboard() {
           <div className="space-y-3 mb-8">
             <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-stone-50 border border-stone-100">
               <span className="text-xs font-bold text-stone-400 uppercase tracking-wide">Email</span>
-              <span className="text-sm font-semibold text-stone-700">{credentialUser?.email}</span>
+              <span className="text-sm font-semibold text-stone-700">{user?.email}</span>
             </div>
             <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-stone-50 border border-stone-100">
               <span className="text-xs font-bold text-stone-400 uppercase tracking-wide">Contact</span>
               <span className="text-sm font-semibold text-stone-700">
-                {credentialUser?.contactNo || "Not provided"}
+                {user?.contactNo || "Not provided"}
               </span>
             </div>
           </div>

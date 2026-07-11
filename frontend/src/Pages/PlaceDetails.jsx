@@ -1,14 +1,41 @@
-// src/Pages/PlaceDetails.jsx
-
 import { useParams, Link } from "react-router-dom";
-import places from "../data/places";
+import { useState, useEffect } from "react";
+import api from "../utils/axiosInstance";
 
 const PlaceDetails = () => {
   const { id } = useParams();
-  const place = places.find((p) => p.id === parseInt(id));
+  const [place, setPlace] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // ── Not Found ──
-  if (!place) {
+  useEffect(() => {
+    const fetchPlace = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get(`/api/places/${id}`);
+        setPlace(res.data.place);
+
+        // Increment view count silently — don't block render if it fails
+        api.patch(`/api/places/${id}/view`).catch(() => {});
+      } catch (err) {
+        setError("Place not found or failed to load.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlace();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FFFBF5] flex items-center justify-center">
+        <p className="text-stone-400 text-sm">Loading place details...</p>
+      </div>
+    );
+  }
+
+  if (error || !place) {
     return (
       <div className="min-h-screen bg-[#FFFBF5] flex flex-col items-center justify-center text-center px-6">
         <div className="text-6xl mb-4">🗺️</div>
@@ -34,25 +61,31 @@ const PlaceDetails = () => {
   return (
     <div className="min-h-screen bg-[#FFFBF5]">
 
-      {/* ── Hero Image ── */}
+      {/* Hero Image */}
       <div className="relative w-full h-72 md:h-[420px] overflow-hidden">
         <img
           src={place.image}
           alt={place.name}
           className="w-full h-full object-cover"
         />
-        {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-        {/* Back button */}
         <Link
-          to="/explore"
+          to="/my-places"
           className="absolute top-5 left-5 inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-sm font-semibold rounded-full border border-white/30 transition-all duration-200"
         >
           ← Back
         </Link>
 
-        {/* Place name on image */}
+        {/* Views badge on hero */}
+        <div className="absolute top-5 right-5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/30 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          {place.views ?? 0} {place.views === 1 ? "view" : "views"}
+        </div>
+
         <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 pb-8">
           <h1
             className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-lg"
@@ -63,28 +96,37 @@ const PlaceDetails = () => {
         </div>
       </div>
 
-      {/* ── Content ── */}
+      {/* Content */}
       <div className="max-w-5xl mx-auto px-6 md:px-12 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        {/* Left — Description */}
-        <div className="md:col-span-2">
+        {/* Left */}
+        <div className="md:col-span-2 flex flex-col gap-6">
           <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-8">
             <p className="text-xs font-bold tracking-widest text-teal-600 uppercase mb-3">
-              📖 About this place
+              About this place
             </p>
             <p className="text-stone-600 text-base leading-relaxed">
               {place.description}
             </p>
           </div>
+
+          {place.directionGuidance && (
+            <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-8">
+              <p className="text-xs font-bold tracking-widest text-teal-600 uppercase mb-3">
+                Direction Guidance
+              </p>
+              <p className="text-stone-600 text-base leading-relaxed">
+                {place.directionGuidance}
+              </p>
+            </div>
+          )}
         </div>
 
-        {/* Right — Info Sidebar */}
+        {/* Right */}
         <div className="flex flex-col gap-4">
-
-          {/* Location card */}
           <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-6">
             <p className="text-xs font-bold tracking-widest text-teal-600 uppercase mb-4">
-              📍 Location
+              Location
             </p>
             <div className="flex flex-col gap-3">
               {place.city && (
@@ -99,10 +141,22 @@ const PlaceDetails = () => {
                   <span className="text-sm font-bold text-stone-700">{place.state}</span>
                 </div>
               )}
+              {place.location?.address && (
+                <div className="flex flex-col gap-1 pt-2 border-t border-stone-100">
+                  <span className="text-xs text-stone-400 font-medium">Detected Address</span>
+                  <span className="text-xs text-stone-600">{place.location.address}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* CTA */}
+          <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-6">
+            <p className="text-xs font-bold tracking-widest text-teal-600 uppercase mb-3">
+              Added by
+            </p>
+            <p className="text-sm font-semibold text-stone-700">{place.email}</p>
+          </div>
+
           <Link
             to="/explore"
             className="w-full text-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded-full shadow-md shadow-orange-100 transition-all duration-200 hover:-translate-y-0.5"

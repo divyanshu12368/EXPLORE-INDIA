@@ -1,19 +1,36 @@
 // src/components/Dropdown/StateCityDropdown.jsx
 
-import { useState, useMemo } from "react";
-import cities from "../../data/cities.json";
+import { useState, useMemo, useEffect } from "react";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const StateCityDropdown = ({ onCitySelect, onStateSelect, onReset }) => {
+  const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
+  useEffect(() => {
+    const fetchCities = async () => {
+      const res = await fetch(`${BASE_URL}/api/cities`);
+      const data = await res.json();
+      setCities(data);
+    };
+    fetchCities();
+  }, []);
+
+  // Clear internal selection whenever parent toggles onReset
+  // (triggered by "Clear filter" or when user picks a city via the search bar instead)
+  useEffect(() => {
+    setSelectedState("");
+    setSelectedCity("");
+  }, [onReset]);
+
   const states = useMemo(() => {
     return [...new Set(cities.map((item) => item.state))].sort();
-  }, []);
+  }, [cities]);
 
   const filteredCities = useMemo(() => {
     return cities.filter((item) => item.state === selectedState);
-  }, [selectedState]);
+  }, [cities, selectedState]);
 
   const handleStateChange = (e) => {
     const val = e.target.value;
@@ -28,12 +45,6 @@ const StateCityDropdown = ({ onCitySelect, onStateSelect, onReset }) => {
     setSelectedCity(val);
     onCitySelect?.(val);
   };
-
-  // expose reset to parent via useEffect trick — instead we watch onReset as a signal
-  // Parent calls handleReset which sets city/state to "" — we sync via controlled reset
-  // So we need to allow parent to reset our internal state too.
-  // We handle this by making the component re-render when onReset is triggered from parent.
-  // Simple approach: lift reset into this component and expose via prop callback.
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -56,7 +67,6 @@ const StateCityDropdown = ({ onCitySelect, onStateSelect, onReset }) => {
               </option>
             ))}
           </select>
-          {/* Custom arrow */}
           <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -88,7 +98,6 @@ const StateCityDropdown = ({ onCitySelect, onStateSelect, onReset }) => {
               </option>
             ))}
           </select>
-          {/* Custom arrow */}
           <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
