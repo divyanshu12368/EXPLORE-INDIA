@@ -1,14 +1,36 @@
 import { useState } from "react";
 import { StateCityDropdown } from "./index";
 import { SelectedCards } from "./index";
+import CitySearch from "./search/CitySearch";
 
 const ExplorePlaces = () => {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [resetSearch, setResetSearch] = useState(false);
+  const [resetDropdown, setResetDropdown] = useState(false);
 
   const handleReset = () => {
     setCity("");
     setState("");
+    setResetSearch((prev) => !prev);
+    setResetDropdown((prev) => !prev);
+  };
+
+  // Picking via dropdown clears the search bar
+  const handleDropdownCity = (val) => {
+    setCity(val);
+    setResetSearch((prev) => !prev);
+  };
+
+  const handleDropdownState = (val) => {
+    setState(val);
+  };
+
+  // Picking via search clears the dropdown
+  const handleSearchCity = (val) => {
+    setCity(val);
+    setState("");
+    setResetDropdown((prev) => !prev);
   };
 
   return (
@@ -30,29 +52,51 @@ const ExplorePlaces = () => {
         </p>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white rounded-2xl border border-orange-100 shadow-sm px-6 py-6 mb-4">
-        <div className="flex flex-col sm:flex-row items-end gap-4">
-          <div className="flex-1 w-full">
+      {/* Top-right filter cluster: Search OR Dropdown */}
+      <div className="flex flex-col lg:flex-row lg:justify-end lg:items-start gap-4 mb-4">
+
+        {/* City Search */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-bold tracking-wide text-stone-400 uppercase">
+            Search by City
+          </span>
+          <CitySearch onSelectCity={handleSearchCity} externalReset={resetSearch} />
+        </div>
+
+        {/* OR divider
+        <div className="hidden lg:flex items-end pb-2.5">
+          <span className="text-xs font-bold text-stone-300 px-1">OR</span>
+        </div> */}
+
+        {/* State/City Dropdown */}
+        {/* <div className="flex flex-col gap-1.5 w-full lg:w-auto">
+          <span className="text-xs font-bold tracking-wide text-stone-400 uppercase">
+            Browse by State
+          </span>
+          <div className="bg-white rounded-2xl border border-orange-100 shadow-sm px-6 py-4 lg:min-w-[420px]">
             <StateCityDropdown
-              onCitySelect={setCity}
-              onStateSelect={setState}
-              onReset={handleReset}
+              onCitySelect={handleDropdownCity}
+              onStateSelect={handleDropdownState}
+              onReset={resetDropdown}
             />
           </div>
-          {(city || state) && (
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-3 rounded-xl border border-stone-200 text-stone-400 hover:text-red-400 hover:border-red-200 hover:bg-red-50 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Clear filter
-            </button>
-          )}
-        </div>
+        </div> */}
       </div>
+
+      {/* Clear filter */}
+      {(city || state) && (
+        <div className="flex justify-end mb-8">
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-200 text-stone-400 hover:text-red-400 hover:border-red-200 hover:bg-red-50 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Clear filter
+          </button>
+        </div>
+      )}
 
       {/* Active filter badge */}
       {(city || state) && (

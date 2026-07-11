@@ -5,10 +5,11 @@ import api from "../utils/axiosInstance";
 export default function TopPlacesSlider() {
   const [places, setPlaces] = useState([]);
   const [current, setCurrent] = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState("next"); // "next" | "prev"
   const [loading, setLoading] = useState(true);
+  const [transition, setTransition] = useState(true);
   const intervalRef = useRef(null);
+
+  const VISIBLE = 3; // cards visible at once on desktop
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -33,51 +34,46 @@ export default function TopPlacesSlider() {
   const startAutoSlide = () => {
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      triggerSlide("next");
+      goNext();
     }, 3500);
   };
 
   const stopAutoSlide = () => clearInterval(intervalRef.current);
 
-  const triggerSlide = (dir) => {
-    if (animating) return;
-    setDirection(dir);
-    setAnimating(true);
-    setTimeout(() => {
-      setCurrent((prev) =>
-        dir === "next"
-          ? (prev + 1) % places.length
-          : (prev - 1 + places.length) % places.length
-      );
-      setAnimating(false);
-    }, 400);
+  // Build an extended track: [last clone, ...all places, first clones...]
+  // so we always have enough cards to slide into view smoothly
+  const extendedPlaces =
+    places.length > 0
+      ? [...places, ...places.slice(0, VISIBLE)] // append a few clones at the end
+      : [];
+
+  const goNext = () => {
+    setTransition(true);
+    setCurrent((prev) => prev + 1);
   };
 
   const goPrev = () => {
-    triggerSlide("prev");
-    startAutoSlide();
-  };
-
-  const goNext = () => {
-    triggerSlide("next");
-    startAutoSlide();
+    setTransition(true);
+    setCurrent((prev) => (prev - 1 + places.length) % places.length);
   };
 
   const goTo = (index) => {
-    if (index === current || animating) return;
-    setDirection(index > current ? "next" : "prev");
-    setAnimating(true);
-    setTimeout(() => {
-      setCurrent(index);
-      setAnimating(false);
-    }, 400);
+    setTransition(true);
+    setCurrent(index);
     startAutoSlide();
   };
 
-  const getVisiblePlaces = () => {
-    if (places.length === 0) return [];
-    return [0, 1, 2].map((offset) => places[(current + offset) % places.length]);
-  };
+  // When we slide past the real items into the cloned region, snap back invisibly
+  useEffect(() => {
+    if (places.length === 0) return;
+    if (current >= places.length) {
+      const timeout = setTimeout(() => {
+        setTransition(false);
+        setCurrent(0);
+      }, 500); // matches transition duration
+      return () => clearTimeout(timeout);
+    }
+  }, [current, places.length]);
 
   if (loading) {
     return (
@@ -102,14 +98,8 @@ export default function TopPlacesSlider() {
 
   if (places.length === 0) return null;
 
-  const visiblePlaces = getVisiblePlaces();
-
-  // Slide animation classes
-  const slideClass = animating
-    ? direction === "next"
-      ? "opacity-0 -translate-x-8"
-      : "opacity-0 translate-x-8"
-    : "opacity-100 translate-x-0";
+  // Each card takes 100/VISIBLE % width; track shifts by `current` cards
+  const cardWidthPercent = 100 / VISIBLE;
 
   return (
     <section className="bg-[#FFFBF5] px-6 py-20 overflow-hidden">
@@ -129,21 +119,18 @@ export default function TopPlacesSlider() {
             </h2>
           </div>
 
-          {/* Prev / Next arrows */}
           <div className="flex items-center gap-2">
             <button
-              onClick={goPrev}
-              disabled={animating}
-              className="w-10 h-10 flex items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => { goPrev(); startAutoSlide(); }}
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 transition-all duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
-              onClick={goNext}
-              disabled={animating}
-              className="w-10 h-10 flex items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => { goNext(); startAutoSlide(); }}
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 transition-all duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -152,57 +139,66 @@ export default function TopPlacesSlider() {
           </div>
         </div>
 
-        {/* Cards with slide animation */}
+        {/* Slider viewport */}
         <div
+          className="overflow-hidden"
           onMouseEnter={stopAutoSlide}
           onMouseLeave={startAutoSlide}
         >
           <div
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-400 ease-in-out ${slideClass}`}
+            className="flex"
+            style={{
+              transform: `translateX(-${current * cardWidthPercent}%)`,
+              transition: transition ? "transform 500ms ease-in-out" : "none",
+            }}
           >
-            {visiblePlaces.map((place, i) => (
-              <Link
-                key={`${place._id}-${current}-${i}`}
-                to={`/place/${place._id}`}
-                className="group block bg-white rounded-2xl overflow-hidden border border-orange-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
+            {extendedPlaces.map((place, i) => (
+              <div
+                key={`${place._id}-${i}`}
+                className="px-3 box-border flex-shrink-0 w-full sm:w-1/2 lg:w-1/3"
               >
-                {/* Image */}
-                <div className="overflow-hidden h-52 relative">
-                  <img
-                    src={place.image}
-                    alt={place.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-teal-700 text-xs font-bold border border-teal-100 shadow-sm">
-                    {place.state}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                  <h3
-                    className="font-black text-stone-900 text-base mb-1.5 group-hover:text-orange-500 transition-colors duration-200"
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >
-                    {place.name}
-                  </h3>
-                  <p className="text-stone-400 text-sm leading-relaxed mb-4 line-clamp-2">
-                    {place.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {place.city}
-                    </span>
-                    <span className="text-xs font-semibold text-orange-500 group-hover:translate-x-0.5 transition-transform duration-200">
-                      View details →
+                <Link
+                  to={`/place/${place._id}`}
+                  className="group block bg-white rounded-2xl overflow-hidden border border-orange-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
+                >
+                  {/* Image */}
+                  <div className="overflow-hidden h-52 relative">
+                    <img
+                      src={place.image}
+                      alt={place.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-teal-700 text-xs font-bold border border-teal-100 shadow-sm">
+                      {place.state}
                     </span>
                   </div>
-                </div>
-              </Link>
+
+                  {/* Content */}
+                  <div className="p-5">
+                    <h3
+                      className="font-black text-stone-900 text-base mb-1.5 group-hover:text-orange-500 transition-colors duration-200"
+                      style={{ fontFamily: "Georgia, serif" }}
+                    >
+                      {place.name}
+                    </h3>
+                    <p className="text-stone-400 text-sm leading-relaxed mb-4 line-clamp-2">
+                      {place.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {place.city}
+                      </span>
+                      <span className="text-xs font-semibold text-orange-500 group-hover:translate-x-0.5 transition-transform duration-200">
+                        View details →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         </div>

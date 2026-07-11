@@ -14,6 +14,7 @@ const placeSchema = new mongoose.Schema(
             address: { type: String },
         },
         directionGuidance: { type: String, default: "" },
+        views: { type: Number, default: 0 },
     },
     { timestamps: true }
 );

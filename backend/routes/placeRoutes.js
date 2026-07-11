@@ -65,6 +65,24 @@ router.get("/my-places", async (req, res) => {
   }
 });
 
+// PATCH /api/places/:id/view
+router.patch("/:id/view", async (req, res) => {
+  try {
+    const place = await Place.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+    if (!place) {
+      return res.status(404).json({ message: "Place not found" });
+    }
+    res.status(200).json({ views: place.views });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 // GET /api/places/:id
 router.get("/:id", async (req, res) => {
   try {
