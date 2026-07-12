@@ -36,34 +36,44 @@ router.get("/images/:placeId", async (req, res) => {
   }
 });
 
+// DELETE /api/extras/images/:imageId
+router.delete("/images/:imageId", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const image = await PlaceImage.findById(req.params.imageId);
+    if (!image) return res.status(404).json({ message: "Image not found" });
+    if (image.email !== email) {
+      return res.status(403).json({ message: "You can only delete your own images" });
+    }
+    await image.deleteOne();
+    res.status(200).json({ message: "Image deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 // ── PROMOTION ────────────────────────────────────────
 
 // POST /api/extras/promotion/:placeId
 router.post("/promotion/:placeId", async (req, res) => {
   try {
     const { images, description, email } = req.body;
-
     if (!images || images.length === 0 || !description || !email) {
       return res.status(400).json({ message: "Images, description and email are required" });
     }
     if (images.length > 5) {
       return res.status(400).json({ message: "Maximum 5 images allowed" });
     }
-
-    // Verify the user is the place owner
     const place = await Place.findById(req.params.placeId);
     if (!place) return res.status(404).json({ message: "Place not found" });
     if (place.email !== email) {
       return res.status(403).json({ message: "Only the place owner can add a promotion" });
     }
-
-    // Replace existing promotion (upsert)
     const promotion = await Promotion.findOneAndUpdate(
       { placeId: req.params.placeId },
       { images, description, email },
       { upsert: true, new: true }
     );
-
     res.status(200).json({ message: "Promotion saved", promotion });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -106,6 +116,22 @@ router.get("/comments/:placeId", async (req, res) => {
   try {
     const comments = await Comment.find({ placeId: req.params.placeId }).sort({ createdAt: -1 });
     res.status(200).json({ comments });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// DELETE /api/extras/comments/:commentId
+router.delete("/comments/:commentId", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+    if (comment.email !== email) {
+      return res.status(403).json({ message: "You can only delete your own comments" });
+    }
+    await comment.deleteOne();
+    res.status(200).json({ message: "Comment deleted" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

@@ -164,6 +164,30 @@ const PlaceDetails = () => {
     }
   };
 
+  // ── Delete Image ──
+const handleDeleteImage = async (imageId) => {
+  try {
+    await api.delete(`/api/extras/images/${imageId}`, {
+      data: { email: user.email },
+    });
+    setPlaceImages((prev) => prev.filter((img) => img._id !== imageId));
+  } catch (err) {
+    console.error("Failed to delete image:", err);
+  }
+};
+
+// ── Delete Comment ──
+const handleDeleteComment = async (commentId) => {
+  try {
+    await api.delete(`/api/extras/comments/${commentId}`, {
+      data: { email: user.email },
+    });
+    setComments((prev) => prev.filter((c) => c._id !== commentId));
+  } catch (err) {
+    console.error("Failed to delete comment:", err);
+  }
+};
+
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
       day: "numeric", month: "short", year: "numeric",
@@ -311,13 +335,29 @@ const PlaceDetails = () => {
 
           {/* Grid */}
           {placeImages.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {placeImages.map((img) => (
-                <div key={img._id} className="aspect-square rounded-xl overflow-hidden border border-stone-100">
-                  <img src={img.imageUrl} alt="Place" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {placeImages.map((img) => (
+              <div key={img._id} className="relative aspect-square rounded-xl overflow-hidden border border-stone-100 group">
+                <img
+                  src={img.imageUrl}
+                  alt="Place"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {/* Delete button — only visible to uploader */}
+                {user?.email === img.email && (
+                  <button
+                    onClick={() => handleDeleteImage(img._id)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
+                    title="Delete image"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="w-12 h-12 rounded-full bg-stone-50 border border-stone-100 flex items-center justify-center mb-3">
@@ -497,7 +537,7 @@ const PlaceDetails = () => {
           {comments.length > 0 ? (
             <div className="flex flex-col divide-y divide-stone-50">
               {comments.map((comment) => (
-                <div key={comment._id} className="py-5 flex gap-3">
+                <div key={comment._id} className="py-5 flex gap-3 group">
                   {/* Avatar */}
                   <div className="w-9 h-9 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center flex-shrink-0">
                     <span className="text-teal-700 font-black text-sm">
@@ -505,9 +545,23 @@ const PlaceDetails = () => {
                     </span>
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-stone-800">{comment.name}</span>
-                      <span className="text-xs text-stone-300">{formatDate(comment.createdAt)}</span>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-stone-800">{comment.name}</span>
+                        <span className="text-xs text-stone-300">{formatDate(comment.createdAt)}</span>
+                      </div>
+                      {/* Delete button — only visible to comment author */}
+                      {user?.email === comment.email && (
+                        <button
+                          onClick={() => handleDeleteComment(comment._id)}
+                          className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-full border border-stone-200 text-stone-400 hover:border-red-200 hover:text-red-400 hover:bg-red-50 flex items-center justify-center transition-all duration-200"
+                          title="Delete comment"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                     <p className="text-sm text-stone-600 leading-relaxed">{comment.text}</p>
                   </div>
