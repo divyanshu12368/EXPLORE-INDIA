@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import cityRoutes from "./routes/cityRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import placeRoutes from "./routes/placeRoutes.js";
+import placeExtrasRoutes from "./routes/placeExtrasRoutes.js";
 import cors from "cors";
 
 dotenv.config();
@@ -25,6 +26,8 @@ app.use("/api/cities", cityRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/places", placeRoutes);
+
+app.use("/api/extras", placeExtrasRoutes);
 
 
 
