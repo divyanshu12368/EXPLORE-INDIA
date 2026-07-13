@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { StateCityDropdown } from "./index";
 import { SelectedCards } from "./index";
@@ -6,25 +6,37 @@ import CitySearch from "./search/CitySearch";
 
 const ExplorePlaces = () => {
   const [searchParams] = useSearchParams();
+  const initializedRef = useRef(false);
 
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(() => {
+    // Initialize city directly from URL on first render
+    const cityParam = searchParams.get("city");
+    return cityParam ? decodeURIComponent(cityParam) : "";
+  });
+
   const [state, setState] = useState("");
-  const [sortByLiked, setSortByLiked] = useState(false);
+  const [sortByLiked, setSortByLiked] = useState(() => {
+    return searchParams.get("sort") === "liked";
+  });
+
   const [resetSearch, setResetSearch] = useState(false);
   const [resetDropdown, setResetDropdown] = useState(false);
 
-  // Read URL params on mount
+  // Only respond to searchParams changes AFTER initial mount
   useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      return;
+    }
+
     const cityParam = searchParams.get("city");
     const sortParam = searchParams.get("sort");
 
-    if (cityParam) {
-      setCity(decodeURIComponent(cityParam));
-    }
-    if (sortParam === "liked") {
-      setSortByLiked(true);
-    }
-  }, []);
+    setCity(cityParam ? decodeURIComponent(cityParam) : "");
+    setSortByLiked(sortParam === "liked");
+    setResetSearch((prev) => !prev);
+    setResetDropdown((prev) => !prev);
+  }, [searchParams]);
 
   const handleReset = () => {
     setCity("");
@@ -75,7 +87,6 @@ const ExplorePlaces = () => {
 
       {/* Filter cluster */}
       <div className="flex flex-col lg:flex-row lg:justify-end lg:items-start gap-4 mb-4">
-
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-bold tracking-wide text-stone-400 uppercase">
             Search by City
