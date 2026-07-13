@@ -26,7 +26,6 @@ router.post("/images/:placeId", async (req, res) => {
   }
 });
 
-// GET /api/extras/images/:placeId
 router.get("/images/:placeId", async (req, res) => {
   try {
     const images = await PlaceImage.find({ placeId: req.params.placeId }).sort({ createdAt: -1 });
