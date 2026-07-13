@@ -1,6 +1,8 @@
 import { Hero } from "../components/index";
 import { Features } from "../components/index";
-import TopPlacesSlider from "../components/TopPlacesSlider";
+import TopPlacesSlider from "../components/Sliders/TopPlacesSlider";
+import NearbyPlacesSlider from "../components/Sliders/NearbyPlacesSlider";
+import TopLikedSlider from "../components/Sliders/TopLikedSlider";
 import { Link } from "react-router-dom";
 
 export default function Home() {
@@ -9,7 +11,14 @@ export default function Home() {
 
       <Hero />
 
+      {/* Recently added places */}
       <TopPlacesSlider />
+
+      {/* Places near the user's city */}
+      <NearbyPlacesSlider />
+
+      {/* Most liked places */}
+      <TopLikedSlider />
 
       <Features />
 

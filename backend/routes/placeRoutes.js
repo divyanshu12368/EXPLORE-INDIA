@@ -83,6 +83,35 @@ router.patch("/:id/view", async (req, res) => {
   }
 });
 
+// GET /api/places/top-liked
+router.get("/top-liked", async (req, res) => {
+  try {
+    const Like = (await import("../models/Like.js")).default;
+
+    // Aggregate likes per place, sort by count descending
+    const liked = await Like.aggregate([
+      { $group: { _id: "$placeId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 20 },
+    ]);
+
+    const placeIds = liked.map((l) => l._id);
+    const places = await Place.find({ _id: { $in: placeIds } });
+
+    // Attach like count to each place and preserve sort order
+    const countMap = {};
+    liked.forEach((l) => { countMap[l._id.toString()] = l.count; });
+    const sorted = placeIds
+      .map((id) => places.find((p) => p._id.toString() === id.toString()))
+      .filter(Boolean)
+      .map((p) => ({ ...p.toObject(), likeCount: countMap[p._id.toString()] }));
+
+    res.status(200).json({ places: sorted });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 // GET /api/places/:id
 router.get("/:id", async (req, res) => {
   try {

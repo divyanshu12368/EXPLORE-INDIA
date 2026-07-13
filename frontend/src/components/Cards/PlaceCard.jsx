@@ -1,6 +1,61 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../Context/AuthContext";
+import api from "../../utils/axiosInstance";
 
 const PlaceCard = ({ place }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(place.likeCount || 0);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchLike = async () => {
+      try {
+        const res = await api.get(
+          `/api/extras/likes/${place._id}${user ? `?email=${user.email}` : ""}`
+        );
+        setLiked(res.data.liked);
+        setLikeCount(res.data.count);
+      } catch {
+        // fail silently
+      }
+    };
+    fetchLike();
+  }, [place._id, user?.email]);
+
+  const handleLike = async (e) => {
+    e.preventDefault(); // prevent Link navigation
+    e.stopPropagation();
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Optimistic update
+    const wasLiked = liked;
+    setLiked(!wasLiked);
+    setLikeCount((prev) => (wasLiked ? prev - 1 : prev + 1));
+
+    try {
+      setLikeLoading(true);
+      const res = await api.post(`/api/extras/likes/${place._id}`, {
+        email: user.email,
+      });
+      setLiked(res.data.liked);
+      setLikeCount(res.data.count);
+    } catch {
+      // Revert on failure
+      setLiked(wasLiked);
+      setLikeCount((prev) => (wasLiked ? prev + 1 : prev - 1));
+    } finally {
+      setLikeLoading(false);
+    }
+  };
+
   return (
     <Link
       to={`/place/${place._id}`}
@@ -42,8 +97,6 @@ const PlaceCard = ({ place }) => {
               </svg>
               {place.city}
             </span>
-
-            {/* Views */}
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-stone-400 bg-stone-50 border border-stone-100 px-2.5 py-1.5 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -53,10 +106,29 @@ const PlaceCard = ({ place }) => {
             </span>
           </div>
 
-          {/* Right: view details */}
-          <span className="text-xs font-semibold text-orange-500 group-hover:translate-x-0.5 transition-transform duration-200">
-            View details →
-          </span>
+          {/* Right: like button */}
+          <button
+            onClick={handleLike}
+            disabled={likeLoading}
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-200 disabled:opacity-60"
+            style={{
+              background: liked ? "#fff1f2" : "#f9fafb",
+              borderColor: liked ? "#fecdd3" : "#e5e7eb",
+              color: liked ? "#e11d48" : "#9ca3af",
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-3.5 h-3.5"
+              fill={liked ? "currentColor" : "none"}
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            {likeCount}
+          </button>
         </div>
       </div>
     </Link>
