@@ -16,15 +16,17 @@ export default function NearbyPlacesSlider() {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
+    let lastCity = "";
+
+    const watchId = navigator.geolocation.watchPosition(
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
 
-          // Reverse geocode to get city
           const geoRes = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
           );
+
           const address = geoRes.data.address;
           const detectedCity =
             address.city ||
@@ -34,27 +36,44 @@ export default function NearbyPlacesSlider() {
             "";
 
           if (!detectedCity) {
-            setDenied(true);
             setLoading(false);
             return;
           }
 
+          // Only re-fetch places if city actually changed
+          if (detectedCity === lastCity) {
+            setLoading(false);
+            return;
+          }
+
+          lastCity = detectedCity;
           setCity(detectedCity);
+          setDenied(false);
+
           const placesRes = await api.get(
             `/api/places/by-city?city=${encodeURIComponent(detectedCity)}`
           );
           setPlaces(placesRes.data.places || []);
         } catch {
-          setDenied(true);
+          // Reverse geocode or API failed — don't crash
         } finally {
           setLoading(false);
         }
       },
-      () => {
+      (err) => {
+        // Permission denied or unavailable
         setDenied(true);
         setLoading(false);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 60000, // cache position for 1 minute to avoid hammering Nominatim
       }
     );
+
+    // Cleanup — stop watching when component unmounts
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   if (denied || (!loading && places.length === 0)) return null;
