@@ -25,7 +25,6 @@ export default function NearbyPlacesSlider() {
           const geoRes = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
           );
-
           const address = geoRes.data.address;
           const detectedCity =
             address.city ||
@@ -41,8 +40,6 @@ export default function NearbyPlacesSlider() {
           }
 
           setCity(detectedCity);
-
-          // Fetch places for detected city
           const placesRes = await api.get(
             `/api/places/by-city?city=${encodeURIComponent(detectedCity)}`
           );
@@ -54,14 +51,12 @@ export default function NearbyPlacesSlider() {
         }
       },
       () => {
-        // Permission denied — skip section
         setDenied(true);
         setLoading(false);
       }
     );
   }, []);
 
-  // Skip section if denied or no places found
   if (denied || (!loading && places.length === 0)) return null;
 
   if (loading) {
@@ -92,6 +87,7 @@ export default function NearbyPlacesSlider() {
       places={places}
       title={`Places in ${city}`}
       subtitle="Near You"
+      viewAllLink={`/explore?city=${encodeURIComponent(city)}`}
     />
   );
 }

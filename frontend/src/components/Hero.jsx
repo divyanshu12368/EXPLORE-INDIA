@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import CitySearch from "./search/CitySearch";
 
 export default function Hero() {
+  const navigate = useNavigate();
+
+  const handleCitySelect = (cityName) => {
+    if (cityName) {
+      navigate(`/explore?city=${encodeURIComponent(cityName)}`);
+    }
+  };
+
   return (
     <section className="relative overflow-hidden bg-[#FFFBF5] min-h-screen flex flex-col justify-center">
 
@@ -66,7 +75,7 @@ export default function Hero() {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <Link
             to="/explore"
             className="px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide rounded-full shadow-lg shadow-orange-200 transition-all duration-200 hover:shadow-orange-300 hover:-translate-y-0.5 active:translate-y-0"
@@ -79,6 +88,19 @@ export default function Hero() {
           >
             View All Places
           </Link>
+        </div>
+
+        {/* City Search Bar */}
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs font-bold tracking-widest text-stone-400 uppercase">
+            Or search a city directly
+          </p>
+          <div className="w-full max-w-sm">
+            <CitySearch
+              onSelectCity={handleCitySelect}
+              externalReset={false}
+            />
+          </div>
         </div>
 
         {/* Scroll hint */}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { PlaceCard } from "../index";
 import api from "../../utils/axiosInstance";
 
-const SelectedCards = ({ selectedCity, selectedState }) => {
+const SelectedCards = ({ selectedCity, selectedState, sortByLiked }) => {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -16,11 +16,13 @@ const SelectedCards = ({ selectedCity, selectedState }) => {
         let res;
         if (selectedCity) {
           res = await api.get(`/api/places/by-city?city=${selectedCity}`);
+        } else if (sortByLiked) {
+          res = await api.get("/api/places/top-liked");
         } else {
           res = await api.get("/api/places/all");
         }
 
-        setPlaces(res.data.places);
+        setPlaces(res.data.places || []);
       } catch (err) {
         setError("Failed to load places. Please try again.");
       } finally {
@@ -29,9 +31,8 @@ const SelectedCards = ({ selectedCity, selectedState }) => {
     };
 
     fetchPlaces();
-  }, [selectedCity]);
+  }, [selectedCity, sortByLiked]);
 
-  // Loading
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -49,7 +50,6 @@ const SelectedCards = ({ selectedCity, selectedState }) => {
     );
   }
 
-  // Error
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -63,7 +63,6 @@ const SelectedCards = ({ selectedCity, selectedState }) => {
     );
   }
 
-  // Empty
   if (places.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -76,7 +75,9 @@ const SelectedCards = ({ selectedCity, selectedState }) => {
           No places found
         </h3>
         <p className="text-stone-400 text-sm max-w-xs">
-          No tourist places listed for this city yet. Try selecting a different city.
+          {selectedCity
+            ? "No tourist places listed for this city yet. Try selecting a different city."
+            : "No places available yet."}
         </p>
       </div>
     );
