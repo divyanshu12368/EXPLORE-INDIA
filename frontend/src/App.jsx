@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 
 import {Layout} from "./components/";
-import Home from "./Pages/Home";
-import Explore from "./Pages/Explore";
-import PlaceDetails from "./Pages/PlaceDetails";
-import Dashboard from "./Pages/Dashboard";
-import Login from "./Auth/Login";
-import Signup from "./Auth/Signup";
-import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
-import PlaceAdderForm from "./PlaceAdder/PlaceAdderForm";
-import MyPlaces from "./PlaceAdder/MyPlaces";
+import Home from "./Pages/Home/Home";
+import Explore from "./Pages/Explore/Explore";
+import PlaceDetails from "./Pages/PlaceDetails/PlaceDetails";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import Login from "./Pages/Auth/Login";
+import Signup from "./Pages/Auth/Signup";
+import {ProtectedRoute} from "./components/";
+import PlaceAdderForm from "./Pages/PlaceAdder/PlaceAdderForm";
+import MyPlaces from "./Pages/PlaceAdder/MyPlaces";
 
 
 
