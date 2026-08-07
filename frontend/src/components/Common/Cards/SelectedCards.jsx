@@ -15,7 +15,15 @@ const SelectedCards = ({ selectedCity, selectedState, sortByLiked }) => {
 
         let res;
         if (selectedCity) {
-          res = await api.get(`/api/places/by-city?city=${selectedCity}`);
+          // Backend does an exact-match query on `city`, so "kasganj" won't
+          // match a stored "Kasganj". Normalize to first-letter-capital
+          // before hitting the API, regardless of how the user typed it.
+          const formattedCity =
+            selectedCity.trim().charAt(0).toUpperCase() +
+            selectedCity.trim().slice(1).toLowerCase();
+          res = await api.get(
+            `/api/places/by-city?city=${encodeURIComponent(formattedCity)}`
+          );
         } else if (sortByLiked) {
           res = await api.get("/api/places/top-liked");
         } else {
