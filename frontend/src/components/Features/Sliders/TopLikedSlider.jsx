@@ -50,7 +50,6 @@ export default function TopLikedSlider() {
       <PlacesSlider
         places={places}
         title="Most Liked Places"
-        subtitle="Community Favourites"
         viewAllLink="/explore?sort=liked"
       />
     </div>

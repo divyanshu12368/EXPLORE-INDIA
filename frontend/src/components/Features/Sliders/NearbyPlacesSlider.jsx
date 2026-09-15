@@ -105,7 +105,6 @@ export default function NearbyPlacesSlider() {
     <PlacesSlider
       places={places}
       title={`Places in ${city}`}
-      subtitle="Near You"
       viewAllLink={`/explore?city=${encodeURIComponent(city)}`}
     />
   );

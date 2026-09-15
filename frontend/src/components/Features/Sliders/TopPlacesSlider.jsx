@@ -44,8 +44,8 @@ export default function TopPlacesSlider() {
   return (
     <PlacesSlider
       places={places}
-      title="Top Places to Visit"
-      subtitle="Recently Added"
+      title="Recently Added Treasures"
+      viewAllLabel="View All Destinations"
     />
   );
 }

@@ -16,8 +16,8 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative bg-[#FFFBF5] px-6 py-20">
-      <div className="relative z-10 max-w-3xl mx-auto text-center">
+    <section className="relative bg-[#FFFBF5] h-dvh flex items-center justify-center">
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
 
         {/* Badge */}
         <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold tracking-widest uppercase border border-teal-200">
@@ -30,7 +30,7 @@ export default function Hero() {
           style={{ fontFamily: "Georgia, serif" }}
         >
           Discover the{" "}
-          <span className="relative inline-block">
+          <span className="relative inline">
             <span className="text-orange-500">Soul</span>
             <svg
               className="absolute -bottom-2 left-0 w-full"
